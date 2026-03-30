@@ -1,0 +1,143 @@
+{
+  "entities": {
+    "lead": {
+      "title": "Lead",
+      "description": "Potential client for the agency",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Lead contact name" },
+        "company": { "type": "string", "description": "Company name" },
+        "email": { "type": "string", "format": "email", "description": "Contact email" },
+        "phone": { "type": "string", "description": "Contact phone number" },
+        "socialContact": { "type": "string", "description": "Social media link or contact" },
+        "status": { "type": "string", "enum": ["New", "Contacted", "Qualified", "Proposal", "Won", "Lost"], "description": "Current lead stage" },
+        "value": { "type": "number", "description": "Estimated deal value" },
+        "source": { "type": "string", "description": "Where the lead came from (e.g., Referral, SEO, Ads)" },
+        "notes": { "type": "string", "description": "Internal notes" },
+        "ownerId": { "type": "string", "description": "UID of the agency member managing this lead" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "company", "status", "ownerId"]
+    },
+    "client": {
+      "title": "Client",
+      "description": "Existing client of the agency",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Primary contact name" },
+        "company": { "type": "string", "description": "Company name" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "industry": { "type": "string" },
+        "website": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "company", "ownerId"]
+    },
+    "project": {
+      "title": "Project",
+      "description": "Marketing campaign or project for a client",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Project/Campaign name" },
+        "clientId": { "type": "string", "description": "Reference to the client" },
+        "clientName": { "type": "string" },
+        "status": { "type": "string", "enum": ["Planning", "In Progress", "Review", "Completed", "Cancelled"] },
+        "budget": { "type": "number" },
+        "productLink": { "type": "string", "description": "Link to the final product" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "description": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "clientId", "status", "ownerId"]
+    },
+    "user": {
+      "title": "User",
+      "description": "Agency team member",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["Admin", "Manager", "Member"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["displayName", "email", "role"]
+    },
+    "service": {
+      "title": "Service",
+      "description": "Marketing service offered by the agency",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Service name (e.g., SEO, Social Media)" },
+        "description": { "type": "string" },
+        "basePrice": { "type": "number" },
+        "category": { "type": "string" },
+        "features": { 
+          "type": "array", 
+          "items": { "type": "string" },
+          "description": "List of deliverables or features included in the service"
+        },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["name", "basePrice", "ownerId"]
+    },
+    "revenue": {
+      "title": "Revenue",
+      "description": "Financial revenue record",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Revenue title or project name" },
+        "amount": { "type": "number", "description": "Total revenue amount" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["Success", "Pending", "Cancelled"] },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "amount", "status", "ownerId"]
+    },
+    "acceptance": {
+      "title": "Acceptance",
+      "description": "Project acceptance stage",
+      "type": "object",
+      "properties": {
+        "revenueId": { "type": "string" },
+        "documentUrl": { "type": "string", "description": "Link to acceptance minutes" },
+        "notes": { "type": "string" },
+        "isConfirmed": { "type": "boolean" },
+        "confirmedAt": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["revenueId", "ownerId"]
+    },
+    "payment": {
+      "title": "Payment",
+      "description": "Payment tracking stage",
+      "type": "object",
+      "properties": {
+        "revenueId": { "type": "string" },
+        "amount": { "type": "number" },
+        "dueDate": { "type": "string", "format": "date" },
+        "paidAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Unpaid", "Paid"] },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["revenueId", "amount", "status", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/leads/{leadId}": { "schema": "lead", "description": "Collection of potential clients" },
+    "/clients/{clientId}": { "schema": "client", "description": "Collection of active clients" },
+    "/projects/{projectId}": { "schema": "project", "description": "Collection of marketing projects" },
+    "/users/{userId}": { "schema": "user", "description": "Collection of agency members" },
+    "/services/{serviceId}": { "schema": "service", "description": "Collection of agency services" },
+    "/revenues/{revenueId}": { "schema": "revenue", "description": "Collection of revenue records" },
+    "/acceptances/{acceptanceId}": { "schema": "acceptance", "description": "Collection of acceptance records" },
+    "/payments/{paymentId}": { "schema": "payment", "description": "Collection of payment records" }
+  }
+}
